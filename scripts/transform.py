@@ -2,7 +2,6 @@ from pyspark.sql import DataFrame
 from pyspark.sql.functions import col, trim, upper
 from pyspark.sql.types import StructType
 from functools import reduce
-from typing import Any
 import logging
 
 
