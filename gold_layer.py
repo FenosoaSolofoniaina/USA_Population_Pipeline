@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from scripts.utils import init_spark_session
 
 
-load_dotenv()
+load_dotenv('.databricks.env')
 spark_session = init_spark_session()
 CLEAN_DATA_TABLE = os.getenv('SILVER_TABLE_NAME')
 ANALYTICS_SCHEMA_NAME = os.getenv('GOLD_SCHEMA_NAME')

@@ -25,7 +25,7 @@ def extract_data(spark_session: SparkSession,
                  urls: list[str]) -> DataFrame :
     """ """
 
-    raw_data = send_requests(urls=urls)
+    raw_data = send_requests(urls=urls, headers={'user-agent' : os.getenv('USER_AGENT') })
     df = spark_session.createDataFrame(raw_data)
     
     return df
@@ -44,13 +44,12 @@ def ingest_bronze_layer(dataframe: DataFrame,
 
 
  # Initialize Logger and constants
-load_dotenv()
+load_dotenv('.databricks.env')
 RAW_DATA_TABLE = os.getenv('BRONZE_TABLE_NAME')
-
 spark_session = init_spark_session()
 urls = build_api_urls()
 df = extract_data(spark_session, urls)
 ingest_bronze_layer(df,
-                    data_fp=RAW_DATA_TABLE)
+                   data_fp=RAW_DATA_TABLE)
 
 print(f"DATA SAVED AT : '{RAW_DATA_TABLE}'")

@@ -10,7 +10,7 @@ from scripts.transform import change_schema, to_uppercase, remove_white_space
 from scripts.load import load_data_table, save_as_table
 
 
-load_dotenv()
+load_dotenv('.databricks.env')
 spark_session = init_spark_session()
 RAW_DATA_FP = os.getenv('BRONZE_TABLE_NAME')
 CLEAN_DATA_TABLE = os.getenv('SILVER_TABLE_NAME')

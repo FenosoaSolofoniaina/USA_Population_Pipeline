@@ -2,18 +2,17 @@ import os
 import requests
 from typing import Any
 import logging
-from dotenv import load_dotenv
 
 
-def send_requests(urls: list[str]) -> list[Any] :
+def send_requests(urls: list[str], headers: Any=None) -> list[Any] :
     """ """
-    load_dotenv()
+
     results = []
 
     for url in urls :
 
         try :
-            response = requests.get(url=url, headers={'user-agent' : os.getenv('USER_AGENT') })
+            response = requests.get(url=url, headers=headers)
             response.raise_for_status()
             jsonData = response.json()
             if len(jsonData['data']) :
