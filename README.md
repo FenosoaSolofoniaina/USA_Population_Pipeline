@@ -1,6 +1,14 @@
 # USA_Population_Pipeline
+#PLAN
+- [1. Introduction](https://github.com/FenosoaSolofoniaina/USA_Population_Pipeline#1-introduction)
+- [2. Architecture](https://github.com/FenosoaSolofoniaina/USA_Population_Pipeline#2-architecture)
+- [3. Fonctionnalités](https://github.com/FenosoaSolofoniaina/USA_Population_Pipeline#3-fonctionnalit%C3%A9s)
+- [4. Structures](https://github.com/FenosoaSolofoniaina/USA_Population_Pipeline#4-structures)
+- [5. Stacks](https://github.com/FenosoaSolofoniaina/USA_Population_Pipeline#5-stacks)
+- [6. Configuration](https://github.com/FenosoaSolofoniaina/USA_Population_Pipeline#6-configuration)
+- [7. Execution](https://github.com/FenosoaSolofoniaina/USA_Population_Pipeline#7-execution)
 
-## 1.Introduction
+## 1. Introduction
 Le projet **USA_Population_Pipeline** est un projet de pipeline de données sur [Databricks](https://www.databricks.com/). Les données sont extraites depuis l'api [Data USA](https://datausa.io/about/api) avec le language [Python](https://www.python.org/), nettoyées et transformées en utilisant [PySpark](https://spark.apache.org/docs/latest/api/python/index.html) et SQL, pour être ensuite stockées dans des `Delta table` sur Databricks. Ces données seront ensuite téléversé dans *Google BigQuery* de [Google CLoud](https://cloud.google.com/) pour l'analyse plus tard.
 
 ## 2.Architecture
@@ -29,7 +37,7 @@ Le projet se base sur l'architecture `Médallion` où les données passent par 3
 - Envoyer les données sur le cloud.
 
 ## 4.Structures
-    |-- USA_Population_Pipeline
+    |-- USA_Population_Pipeline/
         |--data/   # Si besoin de stocker les données en CSV ou JSON (en cours... )
         |-- logs/  # Log pour suivre le déroulement du pipeline (en cours... )
         |-- queries/ # Contenant les fichiers SQL de test avant d'envoyer le code dans `gold_layer.py`
@@ -89,6 +97,7 @@ GOLD_SCHEMA_NAME=your_gold_schema
 NB: Seul le chemin vers le schema est nécessaire car des tables y seront automatiques créés à l'execution du pipeline.
 
 Finalement, le fichier sera :
+`.databricks.env`
 ```txt
 USER_AGENT=your_browser_user_agent
 PROJECT_DIR=your_project_directory_on_databricks
@@ -104,10 +113,10 @@ Il existe 3 différentes façons de lancer le Pipeline :
     Cela consiste à lancer dans l'ordre les fichier `bronze_layer.py`, `silver_layer.py` et `gold_layer.py`. C'est idéal pour tester si la configuration de chaque fichier a bien fonctionné et cette méthode permet de détecter d'éventuelles erreurs qui pourront apparaître lors du l'execution du pipeline.
 
 - Création de fichier `main.py` :
-    Comme précédement, cela consiste à lancer les 3 fichiers mais de manière automatique depuis un fichier main. C'est idéal pour voir l'interaction et la dépendance entre les 3 couches.
+    Comme précédement, cela consiste à lancer les 3 fichiers mais de manière automatique depuis un fichier `main.py`. C'est idéal pour voir l'interaction et la dépendance entre les 3 couches.
 
 - Lancement automatique du fichier :
-    Une fois que les tests sur les 3 fichiers ont été bien vérifiés. Il est maintenant temps de lancer le pipeline de manière automatique depuis l'onglet `Jobs & Pipelines` > Create > Job. Le gros avantage est qu'on peut planifier l'execution du code via l'option `schedule`.
+    Une fois que les tests sur les 3 fichiers ont été bien vérifiés. Il est maintenant temps de lancer le pipeline de manière automatique depuis l'onglet `Jobs & Pipelines` > `Create` > `Job`. Le gros avantage est qu'on peut planifier l'execution automatique du pipeline via l'option `schedule`.
 
 
 **Fenosoa SOLOFONIAINA**
