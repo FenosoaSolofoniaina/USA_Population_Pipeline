@@ -1,5 +1,5 @@
 # USA_Population_Pipeline
-#PLAN
+# PLAN
 - [1. Introduction](https://github.com/FenosoaSolofoniaina/USA_Population_Pipeline#1-introduction)
 - [2. Architecture](https://github.com/FenosoaSolofoniaina/USA_Population_Pipeline#2-architecture)
 - [3. Fonctionnalités](https://github.com/FenosoaSolofoniaina/USA_Population_Pipeline#3-fonctionnalit%C3%A9s)
@@ -93,8 +93,7 @@ SILVER_TABLE_NAME=your_silver_table_name
 ```txt
 GOLD_SCHEMA_NAME=your_gold_schema
 ```
-*your_gold_schema*, Le chemin pour stocker les données depuis la couche Silver vers la couche Gold. De la forme `workspace.<gold_schema>.`
-NB: Seul le chemin vers le schema est nécessaire car des tables y seront automatiques créés à l'execution du pipeline.
+*your_gold_schema*, Le chemin pour stocker les données depuis la couche Silver vers la couche Gold. De la forme `workspace.<gold_schema>.`. Seul le chemin vers le schema est nécessaire car des tables y seront automatiques créés à l'execution du pipeline.
 
 Finalement, le fichier sera :
 `.databricks.env`
