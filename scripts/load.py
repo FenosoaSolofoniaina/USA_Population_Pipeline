@@ -1,25 +1,41 @@
-from pyspark.sql import DataFrame, SparkSession
 import logging
+from typing import Any, Union
+from pyspark.sql import DataFrame, SparkSession
 
 
-def save_to_csv(dataframe: DataFrame, fp: str) -> None :
+
+class DataUsaLoader() :
     """ """
 
-    dataframe.toPandas().to_csv(fp, index=False, header=True)
-    logging.info(f'Data saved into "{fp}"')
+
+    def __init__(self, spark_session: SparkSession, logger: Any=None, dataframe: Union[DataFrame, None]=None) -> None :
+        """ """
+
+        self.dataframe = dataframe
+        self.spark_session = spark_session
+        self.logger = logger if logger else logging.getLogger(__name__)
 
 
-def save_as_table(dataframe: DataFrame, fp: str, mode: str='overwrite') -> None :
-    """ """
+    def load_data_table(self, table_fp: str) -> DataFrame :
+        """ """
 
-    dataframe.write.mode(mode).saveAsTable(fp)
-    logging.info(f'Data saved into "{fp}"')
+        self.dataframe = self.spark_session.read.table(table_fp)
+        self.logger.info(f'Data loaded from TABLE "{table_fp}"')
+
+        return self.dataframe
 
 
-def load_data_table(spark_session: SparkSession, fp: str) -> DataFrame :
-    """ """
+    def save_to_csv(self, csv_fp: str, dataframe: Union[DataFrame, None]=None) -> None :
+        """ """
 
-    df = spark_session.read.table(fp)
-    logging.info(f'Data loaded from "{fp}"')
+        df = dataframe or self.dataframe
+        df.toPandas().to_csv(csv_fp, index=False, header=True)
+        self.logger.info(f'Data saved as CSV into "{csv_fp}"')
 
-    return df
+
+    def save_as_table(self, table_fp: str, mode: str='overwrite', dataframe: Union[DataFrame, None]=None) -> None :
+        """ """
+
+        df = dataframe or self.dataframe
+        df.write.mode(mode).saveAsTable(table_fp)
+        self.logger.info(f'Data saved as TABLE into "{table_fp}"')

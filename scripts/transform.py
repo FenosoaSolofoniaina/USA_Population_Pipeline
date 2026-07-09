@@ -1,65 +1,90 @@
+import logging
+from typing import Any
+from functools import reduce
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import col, trim, upper
 from pyspark.sql.types import StructType
-from functools import reduce
-import logging
 
 
-def remove_empty_values(dataframe: DataFrame, subsets: list[str]) -> DataFrame :
+
+class DataUsaColumnTransformer() :
     """ """
 
-    clean_df = dataframe.filter(
-        reduce(
-            lambda col_1_condition, col_2_condition: col_1_condition & col_2_condition,
-            [ col(column).isNotNull() & (trim(col(column)) != '') for column in subsets]
+
+    def __init__(self, dataframe: DataFrame, logger: Any=None) -> None :
+        """ """
+
+        self.dataframe = dataframe
+        self.logger = logger if logger else logging.getLogger(__name__)
+
+
+    def change_schema(self, schema: StructType) -> DataFrame :
+        """ """
+
+        for field in schema.fields:
+            self.dataframe = self.dataframe.withColumn(field.name, col(field.name).cast(field.dataType))
+
+        logging.info(f"Change schema to : {self.dataframe.schema}")
+
+        return self.dataframe
+    
+    
+    def remove_duplicates(self, subsets: list[str]) -> DataFrame :
+        """ """
+
+        old_n_rows = self.dataframe.count()
+        self.dataframe = self.dataframe.dropDuplicates(subset=subsets)
+
+        self.logger.info(f"Remove duplicated values based on Columns({subsets}). Keep {self.dataframe.count()} rows instead {old_n_rows}")
+
+        return self.dataframe
+
+
+    def remove_empty_values(self, subsets: list[str]) -> DataFrame :
+        """ """
+
+        old_n_rows = self.dataframe.count()
+        self.dataframe = self.dataframe.filter(
+            reduce(
+                lambda col_1_condition, col_2_condition: col_1_condition & col_2_condition,
+                [ col(column).isNotNull() & (trim(col(column)) != '') for column in subsets]
+            )
         )
-    )
 
-    logging.info(f"Remove empty values based on Columns({subsets}). Keep {clean_df.count()} rows instead {dataframe.count()}")
+        self.logger.info(f"Remove empty values based on Columns({subsets}). Keep {self.dataframe.count()} rows instead {old_n_rows}")
 
-    return clean_df
+        return self.dataframe
 
 
-def remove_duplicates(dataframe: DataFrame, subsets: list[str]) -> DataFrame :
+
+class DataUsaRowTransformer() :
     """ """
 
-    pass
 
-    clean_df = dataframe.dropDuplicates(subset=subsets)
+    def __init__(self, dataframe: DataFrame, logger: Any=None) -> None :
+        """ """
 
-    logging.info(f"Remove duplicated values based on Columns({subsets}). Keep {clean_df.count()} rows instead {dataframe.count()}")
-
-    return clean_df
-
-
-def change_schema(dataframe: DataFrame, schema: StructType) -> DataFrame :
-    """ """
-
-    for field in schema.fields:
-        dataframe = dataframe.withColumn(field.name, col(field.name).cast(field.dataType))
-
-    logging.info(f"Change schema to : {dataframe.schema}")
-
-    return dataframe
+        self.dataframe = dataframe
+        self.logger = logger if logger else logging.getLogger(__name__)
 
 
-def to_uppercase(dataframe: DataFrame, subsets: list[str]) -> DataFrame :
-    """ """
+    def to_uppercase(self, subsets: list[str]) -> DataFrame :
+        """ """
 
-    for column in subsets :
-        processed_df = dataframe.withColumn(column, upper(col(column)) )
+        for column in subsets :
+            self.dataframe = self.dataframe.withColumn(column, upper(col(column)) )
 
-    logging.info("TO UPPERCASE")
+        self.logger.info("TO UPPERCASE")
 
-    return processed_df
+        return self.dataframe
 
 
-def remove_white_space(dataframe: DataFrame, subsets: list[str]) -> DataFrame :
-    """ """
+    def remove_white_space(self, subsets: list[str]) -> DataFrame :
+        """ """
 
-    for column in subsets :
-        processed_df = dataframe.withColumn( column, trim(col(column)) )
+        for column in subsets :
+            self.dataframe = self.dataframe.withColumn( column, trim(col(column)) )
 
-    logging.info("REMOVE WHITE SPACE")
+        self.logger.info("REMOVE WHITE SPACE")
 
-    return processed_df
+        return self.dataframe
